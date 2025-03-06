@@ -50,7 +50,7 @@ This repository contains my projects for [Udacity's Business Analytics](https://
 ---
 ### [Certificate of Completion](https://www.udacity.com/certificate/e/d4d900ac-a324-11ea-aa1d-fbcde351202b)
 
-![Diagrama](Certificate_of_Completion.png)
+![Certificate](Certificate_of_Completion.png)
 
 
 
