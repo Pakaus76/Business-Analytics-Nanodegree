@@ -1,0 +1,37 @@
+WITH CountrySpending AS (
+    SELECT 
+        c.Country, 
+        SUM(il.UnitPrice * il.Quantity) AS TotalSpent
+    FROM 
+        Customer c
+    JOIN 
+        Invoice i ON c.CustomerId = i.CustomerId
+    JOIN 
+        InvoiceLine il ON i.InvoiceId = il.InvoiceId
+    GROUP BY 
+        c.Country
+    ORDER BY 
+        TotalSpent ASC
+    LIMIT 1
+)
+SELECT 
+    c.Country, 
+    mt.Name AS MediaType, 
+    SUM(il.UnitPrice * il.Quantity) AS TotalSpent
+FROM 
+    Customer c
+JOIN 
+    Invoice i ON c.CustomerId = i.CustomerId
+JOIN 
+    InvoiceLine il ON i.InvoiceId = il.InvoiceId
+JOIN 
+    Track t ON il.TrackId = t.TrackId
+JOIN 
+    MediaType mt ON t.MediaTypeId = mt.MediaTypeId
+WHERE 
+    c.Country = (SELECT Country FROM CountrySpending)
+GROUP BY 
+    c.Country, mt.Name
+ORDER BY 
+    TotalSpent DESC;
+

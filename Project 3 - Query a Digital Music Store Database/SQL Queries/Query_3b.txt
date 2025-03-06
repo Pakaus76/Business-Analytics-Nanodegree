@@ -1,0 +1,32 @@
+WITH TopAgent AS (
+    SELECT 
+        e.EmployeeId
+    FROM 
+        Employee e
+    JOIN 
+        Customer c ON e.EmployeeId = c.SupportRepId
+    JOIN 
+        Invoice i ON c.CustomerId = i.CustomerId
+    GROUP BY 
+        e.EmployeeId
+    ORDER BY 
+        SUM(i.Total) DESC
+    LIMIT 1
+)
+SELECT 
+    c.CustomerId, 
+    c.FirstName, 
+    c.LastName, 
+    c.Country, 
+    SUM(i.Total) AS TotalSpent
+FROM 
+    Customer c
+JOIN 
+    Invoice i ON c.CustomerId = i.CustomerId
+WHERE 
+    c.SupportRepId = (SELECT EmployeeId FROM TopAgent)
+GROUP BY 
+    c.CustomerId, c.FirstName, c.LastName, c.Country
+ORDER BY 
+    TotalSpent DESC;
+

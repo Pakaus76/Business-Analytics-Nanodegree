@@ -1,0 +1,36 @@
+WITH EuropeanSales AS (
+    SELECT 
+        g.Name AS Genre, 
+        SUM(il.UnitPrice * il.Quantity) AS TotalSales
+    FROM 
+        Customer c
+    JOIN 
+        Invoice i ON c.CustomerId = i.CustomerId
+    JOIN 
+        InvoiceLine il ON i.InvoiceId = il.InvoiceId
+    JOIN 
+        Track t ON il.TrackId = t.TrackId
+    JOIN 
+        Genre g ON t.GenreId = g.GenreId
+    WHERE 
+        c.Country IN ('Austria', 'Belgium', 'Denmark', 'Finland', 'France', 'Germany', 
+                      'Greece', 'Ireland', 'Italy', 'Netherlands', 'Norway', 'Poland', 
+                      'Portugal', 'Spain', 'Sweden', 'Switzerland', 'United Kingdom')
+    GROUP BY 
+        g.Name
+),
+TotalEuropeanSales AS (
+    SELECT 
+        SUM(TotalSales) AS TotalEuropeSales
+    FROM 
+        EuropeanSales
+)
+SELECT 
+    es.Genre, 
+    es.TotalSales AS AbsoluteSales, 
+    ROUND((es.TotalSales / tes.TotalEuropeSales) * 100, 2) AS PercentageSales
+FROM 
+    EuropeanSales es, 
+    TotalEuropeanSales tes
+ORDER BY 
+    es.TotalSales DESC;

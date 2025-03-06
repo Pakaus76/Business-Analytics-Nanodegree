@@ -1,0 +1,22 @@
+SELECT 
+    ar.Name AS ArtistName, 
+    SUM(il.UnitPrice * il.Quantity) AS TotalRockSales
+FROM 
+    Artist ar
+JOIN 
+    Album al ON ar.ArtistId = al.ArtistId
+JOIN 
+    Track t ON al.AlbumId = t.AlbumId
+JOIN 
+    Genre g ON t.GenreId = g.GenreId
+JOIN 
+    InvoiceLine il ON t.TrackId = il.TrackId
+WHERE 
+    g.Name = 'Rock'
+GROUP BY 
+    ar.Name
+ORDER BY 
+    TotalRockSales DESC;
+
+
+

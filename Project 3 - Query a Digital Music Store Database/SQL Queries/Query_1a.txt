@@ -1,0 +1,36 @@
+WITH NonEuropeanSales AS (
+    SELECT 
+        g.Name AS Genre, 
+        SUM(il.UnitPrice * il.Quantity) AS TotalSales
+    FROM 
+        Customer c
+    JOIN 
+        Invoice i ON c.CustomerId = i.CustomerId
+    JOIN 
+        InvoiceLine il ON i.InvoiceId = il.InvoiceId
+    JOIN 
+        Track t ON il.TrackId = t.TrackId
+    JOIN 
+        Genre g ON t.GenreId = g.GenreId
+    WHERE 
+        c.Country NOT IN ('Austria', 'Belgium', 'Denmark', 'Finland', 'France', 'Germany', 
+                          'Greece', 'Ireland', 'Italy', 'Netherlands', 'Norway', 'Poland', 
+                          'Portugal', 'Spain', 'Sweden', 'Switzerland', 'United Kingdom')
+    GROUP BY 
+        g.Name
+),
+TotalNonEuropeanSales AS (
+    SELECT 
+        SUM(TotalSales) AS TotalNonEuropeSales
+    FROM 
+        NonEuropeanSales
+)
+SELECT 
+    nes.Genre, 
+    nes.TotalSales AS AbsoluteSales, 
+    ROUND((nes.TotalSales / tnes.TotalNonEuropeSales) * 100, 2) AS PercentageSales
+FROM 
+    NonEuropeanSales nes, 
+    TotalNonEuropeanSales tnes
+ORDER BY 
+    nes.TotalSales DESC;
